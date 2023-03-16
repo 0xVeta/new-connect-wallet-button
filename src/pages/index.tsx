@@ -1,7 +1,24 @@
 import Head from "next/head"
-import { ConnectWallet } from "@thirdweb-dev/react"
+import {
+	ConnectWallet,
+	useAddress,
+	useNetwork,
+	useNetworkMismatch,
+	ChainId,
+} from "@thirdweb-dev/react"
+import { useEffect } from "react"
 
 export default function Home() {
+	const address = useAddress()
+	const [, switchNetwork] = useNetwork()
+	const isWrongNetwork = useNetworkMismatch()
+
+	useEffect(() => {
+		if (isWrongNetwork && switchNetwork) {
+			switchNetwork(ChainId.Mumbai)
+		}
+	}, [isWrongNetwork, switchNetwork, address])
+
 	return (
 		<>
 			<Head>
@@ -10,9 +27,17 @@ export default function Home() {
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<>
-				<ConnectWallet />
-			</>
+			<div style={{ width: "250px" }}>
+				<ConnectWallet
+					accentColor={isWrongNetwork ? "#c4c4c4" : "#f213a4"}
+					colorMode="light"
+				/>
+				{isWrongNetwork ? (
+					<p>Please switch your network to the Mumbai Testnet</p>
+				) : (
+					""
+				)}
+			</div>
 		</>
 	)
 }
