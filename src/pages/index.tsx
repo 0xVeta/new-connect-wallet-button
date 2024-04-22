@@ -19,6 +19,13 @@ export default function Home() {
 		}
 	}, [isWrongNetwork, switchNetwork, address])
 
+	useEffect(() => {
+		if (address) {
+			// Post message to parent window including the wallet address
+			window.parent.postMessage({ walletConnected: true, address: address }, '*');
+		}
+	}, [address]); // Depend on the address to trigger this effect when it changes
+
 	return (
 		<>
 			<Head>
